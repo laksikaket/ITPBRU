@@ -11,6 +11,7 @@ public class SignUpActivity extends AppCompatActivity {
     //Explicit ประกาศตัวแปร
     private EditText nameEditText, surnameEditText, userEditText, passwordEditText;
     private String nameString, surnameString, userString, passwordString;
+    private static final String urlUpload = "http://swiftcodingthai.com/pbru2/add_user_master.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +45,15 @@ public class SignUpActivity extends AppCompatActivity {
             MyAlert myAlert = new MyAlert();
             myAlert.myDialog(this, "มีช่องว่าง", "กรุณากรอกทุกช่องคะ");
 
-
-        }
-
-        else
-
-        {
+        } else {
             //False
+            uploadValueToServer();
         }
     }
+
+    private void uploadValueToServer() {
+
+    }   //upload
 
     private boolean checkSpace() {
 
