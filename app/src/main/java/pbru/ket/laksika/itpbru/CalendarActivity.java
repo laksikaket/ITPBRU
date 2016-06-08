@@ -2,6 +2,7 @@ package pbru.ket.laksika.itpbru;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.CalendarView;
@@ -48,16 +49,30 @@ public class CalendarActivity extends AppCompatActivity {
 
             }
         });
-        builder.setNegativeButton("รายรับ", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("รายรับ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
+                dialog.dismiss();
+
+                Intent intent = new Intent(CalendarActivity.this,UploadAccount.class);
+                intent.putExtra("Login", getIntent().getStringArrayExtra("Login"));
+                intent.putExtra("InOut", 0);
+                startActivity(intent);
+
+
                 dialog.dismiss();
 
             }
         });
         builder.setNegativeButton("รายจ่าย", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int i) {
+
+                Intent intent = new Intent(CalendarActivity.this, UploadAccount.class);
+                intent.putExtra("Login", getIntent().getStringArrayExtra("Login"));
+                intent.putExtra("InOut", 1);
+                startActivity(intent);
+
                 dialog.dismiss();
             }
         });
