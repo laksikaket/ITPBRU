@@ -3,6 +3,7 @@ package pbru.ket.laksika.itpbru;
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.Intent;
+        import android.database.Cursor;
         import android.database.sqlite.SQLiteDatabase;
         import android.os.AsyncTask;
         import android.os.Bundle;
@@ -10,6 +11,7 @@ package pbru.ket.laksika.itpbru;
         import android.util.Log;
         import android.view.View;
         import android.widget.EditText;
+        import android.widget.Toast;
 
         import com.squareup.okhttp.OkHttpClient;
         import com.squareup.okhttp.Request;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String urlJSON = "http://swiftcodingthai.com/pbru2/get_user_master.php";
     private EditText userEditText, passwordEditText;
     private String userString, passwordString;
+    private String[] loginStrings;
 
 
     @Override
@@ -68,10 +71,42 @@ public class MainActivity extends AppCompatActivity {
         }   //clickSignIn
 
     private void checkUserAnPassword() {
+        try {
+
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
+                    MODE_PRIVATE,null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERUser = " + "'" + userString + "'",null);
+            cursor.moveToFirst();
+
+            loginStrings = new String[cursor.getColumnCount()];
+            for (int i=0;i<cursor.getColumnCount();i++){
+                loginStrings[i] = cursor.getString(i);
+            }
+            cursor.close();
+
+            //Check Password
+            if (passwordString.equals(loginStrings[4])){
+                Toast.makeText(this,"Wellcom" + loginStrings[1] + "" + loginStrings[2],
+                        Toast.LENGTH_SHORT).show();
+            }else {
+                MyAlert myAlert = new MyAlert();
+                myAlert.myDialog(this,"Password False","Please Try Agin Password False");
+            }
+
+
+
+
+
+        }   catch (Exception e){
+            MyAlert myAlert = new MyAlert();
+            myAlert.myDialog(this,"ไม่มี User นี้ ?","ไม่มี" + userString + "ในฐานข้อมูลของเรา");
+        }
 
 
 
     }   //checkuser
+
+
 
 
     private void mySynJSON() {
