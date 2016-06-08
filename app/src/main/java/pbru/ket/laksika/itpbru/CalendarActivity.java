@@ -33,7 +33,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private void confirmDialog(int day, int month, int year) {
 
-        String strDate = Integer.toString(day) +
+        final String strDate = Integer.toString(day) +
                 "/" + Integer.toString(month + 1) +
                 "/" + Integer.toString(year);
 
@@ -47,6 +47,7 @@ public class CalendarActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
 
+
             }
         });
         builder.setPositiveButton("รายรับ", new DialogInterface.OnClickListener() {
@@ -57,6 +58,7 @@ public class CalendarActivity extends AppCompatActivity {
                 Intent intent = new Intent(CalendarActivity.this,UploadAccount.class);
                 intent.putExtra("Login", getIntent().getStringArrayExtra("Login"));
                 intent.putExtra("InOut", 0);
+                intent.putExtra("Date",strDate);
                 startActivity(intent);
 
 
@@ -64,7 +66,20 @@ public class CalendarActivity extends AppCompatActivity {
 
             }
         });
-        builder.setNegativeButton("รายจ่าย", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("รายจ่าย", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+
+                Intent intent = new Intent(CalendarActivity.this, UploadAccount.class);
+                intent.putExtra("Login", getIntent().getStringArrayExtra("Login"));
+                intent.putExtra("InOut", 1);
+                intent.putExtra("Date",strDate);
+                startActivity(intent);
+
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
 
@@ -75,10 +90,10 @@ public class CalendarActivity extends AppCompatActivity {
 
                 dialog.dismiss();
             }
+
         });
-
-
-    }   //confirmDialog
+        builder.show();
+    }//confirmDialog
 
 
 }   //Main Class
