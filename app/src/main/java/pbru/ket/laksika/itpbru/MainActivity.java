@@ -1,7 +1,5 @@
 package pbru.ket.laksika.itpbru;
 
-
-
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.Intent;
@@ -11,6 +9,7 @@ package pbru.ket.laksika.itpbru;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
         import android.view.View;
+        import android.widget.EditText;
 
         import com.squareup.okhttp.OkHttpClient;
         import com.squareup.okhttp.Request;
@@ -24,12 +23,19 @@ public class MainActivity extends AppCompatActivity {
     //Explicit
     private MyManage myManage;
     private static final String urlJSON = "http://swiftcodingthai.com/pbru2/get_user_master.php";
+    private EditText userEditText, passwordEditText;
+    private String userString, passwordString;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Bind Wiget
+        userEditText = (EditText) findViewById(R.id.editText5);
+        passwordEditText = (EditText) findViewById(R.id.editText6);
+
 
         myManage = new MyManage(this);
 
@@ -46,6 +52,26 @@ public class MainActivity extends AppCompatActivity {
 
     }   // Main Method
 
+        public void clickSignIn(View view){
+
+            userString = userEditText.getText().toString().trim();
+            passwordString = passwordEditText.getText().toString().trim();
+
+            //Check Space
+            if (userString.equals("")|| passwordString.equals("")) {
+                MyAlert myAlert = new MyAlert();
+                myAlert.myDialog(this,"Have Space","Please Fill All Every Blank");
+            } else {
+                checkUserAnPassword();
+            }
+
+        }   //clickSignIn
+
+    private void checkUserAnPassword() {
+
+
+
+    }   //checkuser
 
 
     private void mySynJSON() {
