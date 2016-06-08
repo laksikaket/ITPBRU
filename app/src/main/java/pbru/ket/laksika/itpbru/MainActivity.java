@@ -1,5 +1,7 @@
 package pbru.ket.laksika.itpbru;
 
+
+
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.Intent;
@@ -29,16 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private String userString, passwordString;
     private String[] loginStrings;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Bind Wiget
+        //Bind Widget
         userEditText = (EditText) findViewById(R.id.editText5);
         passwordEditText = (EditText) findViewById(R.id.editText6);
-
 
         myManage = new MyManage(this);
 
@@ -55,59 +55,77 @@ public class MainActivity extends AppCompatActivity {
 
     }   // Main Method
 
-        public void clickSignIn(View view){
+    public void clickSignIn(View view) {
 
-            userString = userEditText.getText().toString().trim();
-            passwordString = passwordEditText.getText().toString().trim();
+        userString = userEditText.getText().toString().trim();
+        passwordString = passwordEditText.getText().toString().trim();
 
-            //Check Space
-            if (userString.equals("")|| passwordString.equals("")) {
-                MyAlert myAlert = new MyAlert();
-                myAlert.myDialog(this,"Have Space","Please Fill All Every Blank");
-            } else {
-                checkUserAnPassword();
-            }
+        //Check Space
+        if (userString.equals("") || passwordString.equals("")) {
+            MyAlert myAlert = new MyAlert();
+            myAlert.myDialog(this, "Have Space", "Please Fill All Every Blank");
+        } else {
+            checkUserAnPassword();
+        }
 
-        }   //clickSignIn
+    }   // clickSignIn
 
     private void checkUserAnPassword() {
+
         try {
 
             SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
-                    MODE_PRIVATE,null);
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERUser = " + "'" + userString + "'",null);
+                    MODE_PRIVATE, null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERE User = " + "'" + userString + "'", null);
             cursor.moveToFirst();
 
             loginStrings = new String[cursor.getColumnCount()];
-            for (int i=0;i<cursor.getColumnCount();i++){
+            for (int i=0;i<cursor.getColumnCount();i++) {
                 loginStrings[i] = cursor.getString(i);
             }
             cursor.close();
 
             //Check Password
-            if (passwordString.equals(loginStrings[4])){
-                Toast.makeText(this,"Wellcom" + loginStrings[1] + "" + loginStrings[2],
+            if (passwordString.equals(loginStrings[4])) {
+                Toast.makeText(this, "Welcome " + loginStrings[1] + " " + loginStrings[2],
                         Toast.LENGTH_SHORT).show();
-            }else {
+
+
+                Intent intent = new Intent(MainActivity.this,CalendarActivity.class);
+                intent.putExtra("Login", loginStrings);
+                startActivity(intent);
+                finish();
+
+            } else {
                 MyAlert myAlert = new MyAlert();
-                myAlert.myDialog(this,"Password False","Please Try Agin Password False");
+                myAlert.myDialog(this, "Password False", "Please Try Again Password False");
             }
 
 
 
-
-
-        }   catch (Exception e){
+        } catch (Exception e) {
             MyAlert myAlert = new MyAlert();
-            myAlert.myDialog(this,"ไม่มี User นี้ ?","ไม่มี" + userString + "ในฐานข้อมูลของเรา");
+            myAlert.myDialog(this, "ไม่มี User นี่ ?", "ไม่มี " + userString + " ในฐานข้อมูลของเรา");
         }
 
+    }   // checkUser
 
 
-    }   //checkuser
-
-
-
+//    private void AddFirst() {
+//
+//        MyData myData = new MyData();
+//
+//        String[] nameStrings = myData.getNameStrings();
+//        String[] surnameStrings = myData.getSurnameStrings();
+//        String[] userStrings = myData.getUserStrings();
+//        String[] passowordStrings = myData.getPasswordStrings();
+//
+//        for (int i=0;i<nameStrings.length;i++) {
+//            myManage.addNewUser(Integer.toString(i + 1), nameStrings[i], surnameStrings[i],
+//                    userStrings[i], passowordStrings[i]);
+//        }
+//
+//    }
 
     private void mySynJSON() {
         ConnectedUserTABLE connectedUserTABLE = new ConnectedUserTABLE(this);
