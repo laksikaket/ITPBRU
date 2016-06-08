@@ -1,25 +1,30 @@
 package pbru.ket.laksika.itpbru;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+
+        import android.app.ProgressDialog;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.database.sqlite.SQLiteDatabase;
+        import android.os.AsyncTask;
+        import android.os.Bundle;
+        import android.support.v7.app.AppCompatActivity;
+        import android.util.Log;
+        import android.view.View;
+
+        import com.squareup.okhttp.OkHttpClient;
+        import com.squareup.okhttp.Request;
+        import com.squareup.okhttp.Response;
+
+        import org.json.JSONArray;
+        import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-
 
     //Explicit
     private MyManage myManage;
     private static final String urlJSON = "http://swiftcodingthai.com/pbru2/get_user_master.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +33,20 @@ public class MainActivity extends AppCompatActivity {
 
         myManage = new MyManage(this);
 
-
         //Test Add New User
-        //myManage.addNewUser("123","name","sur","user","pass");
+        //myManage.addNewUser("123", "name", "sur", "user", "pass");
 
         //Delete All SQLite
         deleteAllSQLite();
 
+        //Show Add First Data
+        //AddFirst();
+
         mySynJSON();
 
     }   // Main Method
+
+
 
     private void mySynJSON() {
         ConnectedUserTABLE connectedUserTABLE = new ConnectedUserTABLE(this);
@@ -45,25 +54,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Create Inner Class
-    private class ConnectedUserTABLE extends AsyncTask<Void, Void, String>{
+    private class ConnectedUserTABLE extends AsyncTask<Void, Void, String> {
 
         private Context context;
         private ProgressDialog progressDialog;
 
-        public ConnectedUserTABLE(Context context){
+
+        public ConnectedUserTABLE(Context context) {
             this.context = context;
-        }   //context
+        }   // Constructor
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(context, "Synchronize","Please Wait...Process Synchronize");
+            progressDialog = ProgressDialog.show(context, "Synchronize Server",
+                    "Please Wait ... Process Synchronize");
 
-        }   //onpre
+        }   // onPre
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(Void... voids) {
 
             try {
 
@@ -71,15 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 Request.Builder builder = new Request.Builder();
                 Request request = builder.url(urlJSON).build();
                 Response response = okHttpClient.newCall(request).execute();
-                return  response.body().string();
+                return response.body().string();
 
-            }  catch (Exception e){
-                Log.d("7June","error DoIn ==>" + e.toString());
+            } catch (Exception e) {
+                Log.d("7June", "error DoIn ==> " + e.toString());
                 return null;
             }
 
-
-        }   //doInBack
+        }   // doInBack
 
         @Override
         protected void onPostExecute(String s) {
@@ -88,14 +98,38 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 progressDialog.dismiss();
-                Log.d("7June","JSON ==>" + s);
+                Log.d("7June", "JSON ==> " + s);
 
-            }   catch (Exception e){
+                JSONArray jsonArray = new JSONArray(s);
+
+                String[] idStrings = new String[jsonArray.length()];
+                String[] nameStrings = new String[jsonArray.length()];
+                String[] surnameStrings = new String[jsonArray.length()];
+                String[] userStrings = new String[jsonArray.length()];
+                String[] passwordStrings = new String[jsonArray.length()];
+
+                for (int i=0;i<jsonArray.length();i++) {
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    idStrings[i] = jsonObject.getString("id");
+                    nameStrings[i] = jsonObject.getString(MyManage.column_name);
+                    surnameStrings[i] = jsonObject.getString(MyManage.column_surname);
+                    userStrings[i] = jsonObject.getString(MyManage.column_user);
+                    passwordStrings[i] = jsonObject.getString(MyManage.column_password);
+
+                    myManage.addNewUser(idStrings[i], nameStrings[i],
+                            surnameStrings[i], userStrings[i], passwordStrings[i]);
+
+                }   //for
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }   //Connceted Class
 
+
+        }   // onPost
+    }   // Connceted Class
 
 
     private void deleteAllSQLite() {
@@ -104,13 +138,11 @@ public class MainActivity extends AppCompatActivity {
                 MODE_PRIVATE, null);
         sqLiteDatabase.delete(MyManage.user_table, null, null);
 
-    }   //deletAllSQLite
+    }   // deleteAllSQLite
 
     public void clickSignUpMain(View view) {
-        startActivity(new Intent(MainActivity.this,SignUpActivity.class));
-
+        startActivity(new Intent(MainActivity.this, SignUpActivity.class));
     }
 
 
-
-}   // Main Class คลาสหลัก
+}   // Main Class นี่คือ คลาสหลัก
